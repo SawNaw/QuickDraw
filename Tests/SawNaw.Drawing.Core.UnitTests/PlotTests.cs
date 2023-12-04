@@ -1,4 +1,6 @@
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+using Moq;
+using SawNaw.Drawing.Core.Drawer;
 
 namespace SawNaw.Drawing.Core.Tests
 {
@@ -92,6 +94,24 @@ namespace SawNaw.Drawing.Core.Tests
 
                 }
             }
+        }
+
+        [Test]
+        public void Draw_CallsPlotDrawer()
+        {
+            var plotDrawer = new Mock<IPlotDrawer>();
+
+            var sut = new PlotBuilder().WithEmptyCharacter('O')
+                                    .WithFillCharacter('Z')
+                                    .WithSideWalls('|')
+                                    .HavingWidth(4)
+                                    .HavingHeight(5)
+                                    .InjectPlotDrawer(plotDrawer.Object)
+                                    .Build();
+
+            sut.Draw();
+
+            plotDrawer.Verify(p => p.Draw(), Times.Once());
         }
 
         private static Plot GetSut()

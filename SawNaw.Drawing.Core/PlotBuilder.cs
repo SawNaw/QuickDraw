@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using SawNaw.Drawing.Core.Drawer;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SawNaw.Drawing.Core
 {
@@ -12,6 +13,7 @@ namespace SawNaw.Drawing.Core
         public char Fill { get; private set; }
         public int Width { get; private set; }
         public int Height { get; private set; }
+        public IPlotDrawer Drawer { get; private set; }
 
         public PlotBuilder WithFloor(char c)
         {
@@ -55,6 +57,12 @@ namespace SawNaw.Drawing.Core
             return this;
         }
 
+        public PlotBuilder InjectPlotDrawer(IPlotDrawer drawer)
+        {
+            this.Drawer = drawer;
+            return this;
+        }
+
         public Plot Build()
         {
             var validator = new PlotBuilderValidator();
@@ -64,7 +72,7 @@ namespace SawNaw.Drawing.Core
                 throw new InvalidOperationException($"{string.Join(Environment.NewLine, result.Errors)}");
             }
 
-            return new Plot(Floor, Walls, Corners, Empty, Fill, Width, Height);
+            return new Plot(Floor, Walls, Corners, Empty, Fill, Width, Height, Drawer);
         }
     }
 }
